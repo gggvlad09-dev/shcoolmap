@@ -1,0 +1,79 @@
+html, body {
+margin: 0;
+padding: 0;
+min-height: 100%;
+overflow-x: hidden;
+}
+
+body {
+font-family: Arial;
+text-align: center;
+color: #333;
+position: relative;
+background: #fff3b0;
+}
+
+/* живой фон */
+body::before {
+content: "";
+position: fixed;
+top: -100%;
+left: -100%;
+width: 300%;
+height: 300%;
+z-index: -1;
+
+background:
+radial-gradient(circle at 30% 40%, #fff9c4, transparent 60%),
+radial-gradient(circle at 70% 60%, #ffe082, transparent 60%),
+radial-gradient(circle at 50% 20%, #fffde7, transparent 60%);
+
+animation: softMove 20s linear infinite;
+}
+
+@keyframes softMove {
+0% { transform: translate(0,0) rotate(0deg); }
+50% { transform: translate(-5%,5%) rotate(180deg); }
+100% { transform: translate(0,0) rotate(360deg); }
+}
+
+.map {
+position: relative;
+display: inline-block;
+}
+
+.map img {
+width: 800px;
+}
+
+.point {
+position: absolute;
+width: 20px;
+height: 20px;
+background: red;
+border-radius: 50%;
+cursor: pointer;
+transition: 0.2s;
+}
+
+.point:hover {
+transform: scale(1.4);
+}
+
+.infoBox {
+display: none;
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: white;
+padding: 20px;
+border-radius: 15px;
+box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+width: 300px;
+}
+
+.infoBox img {
+width: 100%;
+border-radius: 10px;
+}
