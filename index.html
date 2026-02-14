@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Карта школы</title>
+
+<style>
+
+/* фон страницы */
+html, body {
+margin: 0;
+padding: 0;
+min-height: 100%;
+overflow-x: hidden;
+}
+
+body {
+position: relative;
+background: #fff3b0;
+
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+/* живой фон */
+body::before {
+content: "";
+position: fixed;
+top: -100%;
+left: -100%;
+width: 300%;
+height: 300%;
+z-index: -1;
+
+background:
+radial-gradient(circle at 30% 40%, #fff9c4, transparent 60%),
+radial-gradient(circle at 70% 60%, #ffe082, transparent 60%),
+radial-gradient(circle at 50% 20%, #fffde7, transparent 60%);
+
+animation: softMove 20s linear infinite;
+}
+
+@keyframes softMove {
+0% { transform: translate(0,0) rotate(0deg); }
+50% { transform: translate(-5%,5%) rotate(180deg); }
+100% { transform: translate(0,0) rotate(360deg); }
+}
+
+/* стеклянная карточка */
+.mapContainer {
+display: inline-block;
+padding: 25px;
+margin-top: 25px;
+border-radius: 25px;
+
+background: rgba(255,255,255,0.3);
+backdrop-filter: blur(10px);
+
+box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+/* карта */
+.map {
+position: relative;
+}
+
+.map img {
+width: 800px;
+border-radius: 15px;
+}
+
+/* точки */
+.point {
+position: absolute;
+width: 20px;
+height: 20px;
+background: #21a87b;
+border-radius: 50%;
+cursor: pointer;
+transition: 0.2s;
+}
+
+.point:hover {
+transform: scale(1.4);
+box-shadow: 0 0 10px #21a87b;
+}
+
+/* окно информации */
+.infoBox {
+display: none;
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: white;
+padding: 20px;
+border-radius: 15px;
+box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+width: 320px;
+}
+
+.infoBox img {
+width: 100%;
+border-radius: 10px;
+}
+
+button {
+margin-top: 10px;
+padding: 8px 15px;
+cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Интерактивная карта школы</h1>
+
+<div class="mapContainer">
+
+<div class="map">
+
+<img src="shoolmap.png">
+
+<div class="point"
+style="top:370px; left:240px;"
+onclick="showInfo('Столовая','images/photo1.jpg')"></div>
+
+<div class="point"
+style="top:405px; left:520px;"
+onclick="showInfo('Кабинет истории/обществознания','images/photo2.jpg')"></div>
+
+</div>
+
+</div>
+
+<div id="info" class="infoBox">
+<h2 id="title"></h2>
+<img id="photo">
+<button onclick="hideInfo()">Закрыть</button>
+</div>
+
+<script>
+
+function showInfo(title, photo) {
+document.getElementById("title").innerText = title;
+document.getElementById("photo").src = photo;
+document.getElementById("info").style.display = "block";
+}
+
+function hideInfo() {
+document.getElementById("info").style.display = "none";
+}
+
+</script>
+
+</body>
+</html>
