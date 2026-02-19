@@ -3,89 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <title>Карта школы</title>
-
 <style>
-
 /* фон страницы */
-html, body {
-margin: 0;
-padding: 0;
-min-height: 100%;
-overflow-x: hidden;
-}
-
-body {
-position: relative;
-background: #fff3b0;
-
-display: flex;
-flex-direction: column;
-align-items: center;
-}
-
+html, body {margin: 0;padding: 0;min-height: 100%;overflow-x: hidden;}
+body {position: relative;background: #fff3b0;display: flex;flex-direction: column;align-items: center;}
 /* живой фон */
-body::before {
-content: "";
-position: fixed;
-top: -100%;
-left: -100%;
-width: 300%;
-height: 300%;
-z-index: -1;
-
-background:
-radial-gradient(circle at 30% 40%, #fff9c4, transparent 60%),
-radial-gradient(circle at 70% 60%, #ffe082, transparent 60%),
-radial-gradient(circle at 50% 20%, #fffde7, transparent 60%);
-
-animation: softMove 20s linear infinite;
-}
-
-@keyframes softMove {
-0% { transform: translate(0,0) rotate(0deg); }
-50% { transform: translate(-5%,5%) rotate(180deg); }
-100% { transform: translate(0,0) rotate(360deg); }
-}
-
+body::before {content: "";position: fixed;top: -100%;left: -100%;width: 300%;height: 300%;z-index: -1;
+background:radial-gradient(circle at 30% 40%, #fff9c4, transparent 60%),radial-gradient(circle at 70% 60%, #ffe082, transparent 60%),radial-gradient(circle at 50% 20%, #fffde7, transparent 60%);
+animation: softMove 20s linear infinite;}
+@keyframes softMove {0% { transform: translate(0,0) rotate(0deg); }50% { transform: translate(-5%,5%) rotate(180deg); }100% { transform: translate(0,0) rotate(360deg); }}
 /* стеклянная карточка */
-.mapContainer {
-display: inline-block;
-padding: 25px;
-margin-top: 25px;
-border-radius: 25px;
-
-background: rgba(255,255,255,0.3);
-backdrop-filter: blur(10px);
-
-box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-}
-
+.mapContainer {display: inline-block;padding: 25px;margin-top: 25px;border-radius: 25px;background: rgba(255,255,255,0.3);backdrop-filter: blur(10px);box-shadow: 0 15px 35px rgba(0,0,0,0.2);}
 /* карта */
-.map {
-position: relative;
-}
-
-.map img {
-width: 800px;
-border-radius: 15px;
-}
-
+.map {position: relative;}.map 
+img {width: 800px;border-radius: 15px;}
 /* точки */
-.point {
-position: absolute;
-width: 20px;
-height: 20px;
-background: #21a87b;
-border-radius: 50%;
-cursor: pointer;
-transition: 0.2s;
-}
-
-.point:hover {
-transform: scale(1.4);
-box-shadow: 0 0 10px #21a87b;
-}
-
+.point {position: absolute;width: 20px;height: 20px;background: #21a87b;border-radius: 50%;cursor: pointer;transition: 0.2s;}
+.point:hover {transform: scale(1.4);box-shadow: 0 0 10px #21a87b;}
 /* окно информации */
 .infoBox {
 display: none;
@@ -93,68 +27,428 @@ position: fixed;
 top: 50%;
 left: 50%;
 transform: translate(-50%, -50%);
-background: white;
-padding: 20px;
-border-radius: 15px;
-box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-width: 320px;
+
+background: linear-gradient(135deg, #ffffff, #fff8dc);
+padding: 25px;
+border-radius: 20px;
+
+box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+
+width: 420px;
+max-width: 90%;
+
+animation: pop 0.25s ease;
 }
 
-.infoBox img {
-width: 100%;
-border-radius: 10px;
+@keyframes pop {
+from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 }
 
-button {
-margin-top: 10px;
-padding: 8px 15px;
-cursor: pointer;
-}
-
+.infoBox img {width: 100%;border-radius: 10px;}
+button {margin-top: 10px;padding: 8px 15px;cursor: pointer;}
+/* поле поиска */
+#searchInput {margin: 20px 0; padding: 8px 15px; width: 250px; border-radius: 10px; border: 1px solid #ccc; text-align: center;}
 </style>
 </head>
-
 <body>
 
 <h1>Интерактивная карта школы</h1>
 
-<div class="mapContainer">
-
-<div class="map">
-
-<img src="shoolmap.png">
-
-<div class="point"
-style="top:370px; left:240px;"
-onclick="showInfo('Столовая','images/photo1.jpg')"></div>
-
-<div class="point"
-style="top:405px; left:520px;"
-onclick="showInfo('Кабинет истории/обществознания','images/photo2.jpg')"></div>
-
+<div style="margin:10px;">
+<button onclick="showFloor(1)">1 этаж</button>
+<button onclick="showFloor(2)">2 этаж</button>
+<button onclick="showFloor(3)">3 этаж</button>
 </div>
 
+<!-- Поле поиска -->
+<input id="searchInput" placeholder="Поиск точки..." oninput="searchPoint()">
+
+<div class="mapContainer">
+<div class="map">
+<img id="mapImage" src="floor1.png">
+
+<div class="point" 
+data-floor="1"
+data-name="Столовая" 
+style="top:370px; left:240px;
+background-color:rgb(252, 153, 5);"
+onclick="showInfo('Столовая','')"></div>
+
+<div class="point"
+data-floor="1" 
+data-name="Кабинет информатики,информатика,110" 
+style="top:240px; left:665px;" 
+onclick="showInfo('110 Кабинет информатики','Учитель-Гумиров Илья Андреевич','110.jpg')"></div> 
+
+<div class="point" 
+data-floor="1"
+data-name="Кабинет истории/обществознания,история,общество,обществознание,109" 
+style="top:200px; left:640px;" 
+onclick="showInfo('109 Кабинет истории/обществознания','Учитель-Дехтевич Ольга Игоревна','109.jpg')"></div> 
+
+<div class="point" 
+data-floor="1"
+data-name="Кабинет англ.яз,английский,108" 
+style="top:200px; left:603px;" 
+onclick="showInfo('108 Кабинет англ.яз.','Учитель-Талыкова Екатерина Александровна','108.jpg')"></div> 
+
+<div class="point"
+data-floor="1"
+ data-name="Кабинет англ.яз,английский, язык" 
+ style="top:370px; left:465px;" 
+ onclick="showInfo('116 Кабинет англ.яз','Учитель-Малюгина Екатерина Александровна','116.jpg')"></div>
+
+ <div class="point"
+ data-floor="1"
+ data-name="Кабинет Труда,117,труд,Технология" 
+ style="top:320px; left:70px;" 
+ onclick="showInfo('117 Кабинет Труда','Учитель-','')"></div>
+
+<div class="point"
+data-floor="1"
+ data-name="Кабинет англ.яз,английский,107" 
+ style="top:200px; left:565px;" 
+ onclick="showInfo('107 Кабинет англ.яз','Учитель-Маркарян Рипсиме Меликовна')"></div>
+
+<div class="point" 
+data-floor="1"
+data-name="Кабинет ОБЖ,ОБЗР" 
+style="top:300px; left:600px;" 
+onclick="showInfo('111 Кабинет ОБЖ','Учиель-Беспалова Екатерина Геннадиевна','111.jpg')"></div>
+
+<div class="point" data-name="Туалет"
+data-floor="1"
+style="top:300px; left:560px; 
+background-color:rgb(0, 195, 255);" 
+onclick="showInfo('Туалет')"></div>
+
+<div class="point" 
+data-floor="1"
+data-name="Раздевалка,гардероб" 
+style="top:250px; left:310px; background-color:rgb(252, 153, 5);" 
+onclick="showInfo('Гардероб','','')"></div>
+
+<div class="point" 
+data-floor="1"
+data-name="Медпункт" 
+style="top:440px; left:465px; background-color:rgb(255, 0, 0);" 
+onclick="showInfo('Медпункт')"></div>
+
+<div class="point" 
+data-floor="1"
+data-name="Кабинет истории/обществознания,история,общество,обществознание,114"
+style="top: 405px; left:520px;" 
+onclick="showInfo('114 Кабинет истории/обществознания','Учитель-Толкачёв Валентин Сергеевич')"></div>
+
+<div class="point" 
+data-floor="1"
+data-name="Кабинет истории/обществознания,история,общество,обществознание"
+style="top: 355px; left:565px;" 
+onclick="showInfo('113 Кабинет истории/обществознания','Учитель-Аношкин Николай Александрович','113.jpg')"></div>
+
+<div class="point" 
+data-floor="1"
+data-name="Кабинет труда,труд,технология,119"
+style="top: 280px; left:180px;" 
+onclick="showInfo('119 Кабинет труда','Учитель-','')"></div>
+
+<div class="point" 
+data-floor="1"
+data-name="Кабинет ИЗО,118"
+style="top: 280px; left:90px;" 
+onclick="showInfo('118 Кабинет ИЗО','Учитель-','')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="Кабинет физики,физика"
+style="top: 380px; left:35px;" 
+onclick="showInfo('210 Кабинет физики','Учитель-Шарова Оксана Григорьевна','210.jpg')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="Кабинет физики,физика"
+style="top: 415px; left:50px;" 
+onclick="showInfo('209 Кабинет физики','Учитель-Евтеева Любовь Петровна ','209.jpg')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="Кабинет математики,математика"
+style="top: 415px; left:115px;" 
+onclick="showInfo('208 Кабинет математики','Учитель-Тарасова Ирина Олеговна','208.jpg')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="Кабинет математики,математика,212"
+style="top: 245px; left:110px;" 
+onclick="showInfo('212 Кабинет математики','Учитель-Бигалиев Саулет Салимович','')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="211,Кабинет математики,математика,"
+style="top: 310px; left:70px;" 
+onclick="showInfo('211 Кабинет математики','Учитель-','211.jpg')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="213,Кабинет математики,математика"
+style="top: 180px; left:160px;" 
+onclick="showInfo('213 Кабинет математики','Учитель-Захарова Евгения Юрьевна','213.jpg')"></div>
+
+
+<div class="point" 
+data-floor="2"
+data-name="Кабинет математики,математика,214"
+style="top: 120px; left:185px;" 
+onclick="showInfo('214 Кабинет математики','Учитель-','214.jpg')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="Кабинет математики,математика,215"
+style="top: 180px; left:210px;" 
+onclick="showInfo('215 Кабинет математики','Учитель-','')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="Кабинет англ. яз.,английский,216"
+style="top: 265px; left:262px;" 
+onclick="showInfo('216 Кабинет англ. яз.','Учитель-Нагиц Екатерина Анатольевна','')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="Кабинет Универсальный,математика,207"
+style="top: 375px; left:265px;" 
+onclick="showInfo('207 Кабинет универсальный','','207.jpg')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="Англ.яз,английский,218"
+style="top: 330px; left:620px;" 
+onclick="showInfo('218 Кабинет англ.яз','Учитель-Демчук Софья Юрьевна','218.jpg')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="медпункт"
+style="top: 330px; left:505px;background-color:rgb(255, 0, 0);" 
+onclick="showInfo('Медпункт','','')"></div>
+
+
+<div class="point" 
+data-floor="2"
+data-name="Универсальный,музыка,217"
+style="top: 330px; left:695px;" 
+onclick="showInfo('217 Кабинет универсальный','','217.jpg')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="Актовый зал,зал,сцена"
+style="top: 350px; left:340px; background-color:rgb(252, 153, 5);" 
+onclick="showInfo('Актовый зал','','акт.jpg')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="Спорт зал,зал,физра,физкультура"
+style="top: 120px; left:430px; background-color:rgb(252, 153, 5);" 
+onclick="showInfo('Спорт зал (бол)','','')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name=",бассейн,басейн,плавание,плавоние"
+style="top: 190px; left:605px; background-color:rgb(252, 153, 5);" 
+onclick="showInfo('Бассейн','','')"></div>
+
+<div class="point" 
+data-floor="2"
+data-name="Спорт зал,зал,физра,физкультура"
+style="top: 370px; left:445px; background-color:rgb(252, 153, 5);" 
+onclick="showInfo('Спорт зал (ср)','','')"></div>
+
+
+<div class="point" 
+data-floor="2"
+data-name="Туалет"
+style="top: 310px; left:105px; background-color:rgb(0, 195, 255);" 
+onclick="showInfo('Туалет','','')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="Кабинет Русского языка,русский язык,рус яз,литра,литература,312"
+style="top: 250px; left:100px;" 
+onclick="showInfo('312 Кабинет русского языка/литературы','Учитель-Конюхова Светлана Валентиновна','312.jpg')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="Кабинет Русского языка,русский язык,рус яз,литра,литература,309"
+style="top: 415px; left:147px;" 
+onclick="showInfo('309 Кабинет русского языка/литературы','Учитель-Гринько Татьяна Иванова','309.jpg')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="Кабинет хими,химия,310"
+style="top: 385px; left:75px;" 
+onclick="showInfo('310 Кабинет химии','Учитель-Латышева Олеся Валерьевна','310.jpg')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="Кабинет Русского языка,русский язык,рус яз,литра,литература,311"
+style="top: 335px; left:50px;" 
+onclick="showInfo('311 Кабинет русского языка/литературы','Учитель-','')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="Кабинет Русского языка,русский язык,рус яз,литра,литература,313"
+style="top: 173px; left:140px;" 
+onclick="showInfo('313 Кабинет русского языка/литературы','Учитель-Туева Елена Александровна','313.jpg')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="Кабинет Русского языка,русский язык,рус яз,литра,литература,314"
+style="top: 95px; left:185px;" 
+onclick="showInfo('314 Кабинет русского языка/литературы','Учитель-Кузнецова Лариса Сергеевна','314.jpg')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="Кабинет Русского языка,русский язык,рус яз,литра,литература,316"
+style="top: 110px; left:250px;" 
+onclick="showInfo('316 Кабинет русского языка/литературы','Учитель-Кравцова Надежда Константиновна','316.jpg')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="Кабинет Русского языка,русский язык,рус яз,литра,литература,315"
+style="top: 25px; left:225px;" 
+onclick="showInfo('315 Кабинет русского языка/литературы','Учитель-Запруднова Диляра Рафагатова','315.jpg')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="биология,318"
+style="top: 215px; left:350px;" 
+onclick="showInfo('318 Кабинет биологии','Учитель-Каськова Лариса Алексеевна','')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="информатика,308"
+style="top: 425px; left:335px;" 
+onclick="showInfo('308 Кабинет биолокии','Учитель-Жданов Игорь Юрьевич','308.jpg')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="иностранный язык,ин.яз.английский,немецкий,317"
+style="top: 150px; left:250px;" 
+onclick="showInfo('317 Кабинет иностранного языка','Учитель-','')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="биология,химия,319"
+style="top: 215px; left:600px;" 
+onclick="showInfo('319 Кабинет биологии/химии','Учитель-','')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="англ.яз.,англ яз,английский,323"
+style="top: 300px; left:755px;" 
+onclick="showInfo('323 Кабинет англ. яз.','Учитель-Иванова Диана Дмитриевна','323.jpg')"></div>
+
+<div class="point" 
+data-floor="3"
+data-name="туалет"
+style="top: 250px; left:135px;background-color:rgb(0, 195, 255);" 
+onclick="showInfo('Туалет','','')"></div>
+
+
+
+</div>
 </div>
 
 <div id="info" class="infoBox">
 <h2 id="title"></h2>
 <img id="photo">
+<p id="infoText" style="margin-top:10px;"></p>
+
 <button onclick="hideInfo()">Закрыть</button>
+
 </div>
 
 <script>
 
-function showInfo(title, photo) {
-document.getElementById("title").innerText = title;
-document.getElementById("photo").src = photo;
-document.getElementById("info").style.display = "block";
+function showFloor(floor, variant = 1) {
+
+const img = document.getElementById("mapImage");
+
+// меняем карту
+if (floor == 1) img.src = "floor1.png";
+
+if (floor == 2) img.src = "floor2.png"
+
+if (floor == 3) img.src = "floor3.png";
+
+
+// показываем точки только нужного этажа
+const points = document.querySelectorAll(".point");
+
+points.forEach(point => {
+
+if (point.dataset.floor == floor) {
+    point.style.display = "block";
+} else {
+    point.style.display = "none";
 }
 
-function hideInfo() {
-document.getElementById("info").style.display = "none";
+});
+
 }
+
+  function showInfo(title, text, photo) {
+
+document.getElementById("title").innerText = title;
+document.getElementById("infoText").innerText = text;
+document.getElementById("photo").src = photo;
+
+document.getElementById("info").style.display = "block";
+
+}
+function hideInfo() {
+    document.getElementById("info").style.display = "none";
+}
+
+// Поиск по точкам
+function searchPoint() {
+    const text = document.getElementById("searchInput").value.toLowerCase();
+    const points = document.querySelectorAll(".point");
+points.forEach(point => {
+        const name = point.getAttribute("data-name")?.toLowerCase() || "";
+        if (text !== "" && name.includes(text)) {
+            point.style.transform = "scale(2)";
+            point.style.boxShadow = "0 0 15px red";
+            point.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+        } else {
+            point.style.transform = "";
+            point.style.boxShadow = "";
+        }
+    });
+}
+
+function showSubFloor(id) {
+
+    document.querySelectorAll(".floor").forEach(f => {
+        f.classList.remove("active");
+    });
+
+    document.getElementById(id).classList.add("active");
+}
+
+window.onload = function() {
+    document.getElementById("btnFloor1").click();
+};
+
+window.onload = function() {
+    const btn = document.getElementById("btnFloor1");
+    btn.click();
+    
+};
+
 
 </script>
 
 </body>
+<button id="btnFloor1" onclick="showFloor(1)">1 этаж</button>
 </html>
