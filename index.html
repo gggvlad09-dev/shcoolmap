@@ -49,17 +49,49 @@ to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 button {margin-top: 10px;padding: 8px 15px;cursor: pointer;}
 /* поле поиска */
 #searchInput {margin: 20px 0; padding: 8px 15px; width: 250px; border-radius: 10px; border: 1px solid #ccc; text-align: center;}
+
+.floor-btn {
+  padding: 12px 24px;
+  margin: 0 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent;
+}
+
+.floor-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
+}
+
+.floor-btn.active-floor {
+  background: #21a87b;
+  color: white;
+  border-color: #1a8c66;
+  box-shadow: 0 6px 20px rgba(33, 168, 123, 0.4);
+}
+
 </style>
 </head>
 <body>
 
 <h1>Интерактивная карта школы</h1>
 
-<div style="margin:10px;">
-<button onclick="showFloor(1)">1 этаж</button>
-<button onclick="showFloor(2)">2 этаж</button>
-<button onclick="showFloor(3)">3 этаж</button>
+<div class="floor-buttons">
+  <button class="floor-btn active-floor" onclick="showFloor(1)">1 этаж</button>
+  <button class="floor-btn" onclick="showFloor(2)">2 этаж</button>
+  <button class="floor-btn" onclick="showFloor(3)">3 этаж</button>
 </div>
+
+
+
 
 <!-- Поле поиска -->
 <input id="searchInput" placeholder="Поиск точки..." oninput="searchPoint()">
@@ -445,6 +477,36 @@ window.onload = function() {
     btn.click();
     
 };
+
+function showFloor(floor) {
+  const img = document.getElementById("mapImage");
+  // Меняем карту
+  if (floor == 1) {
+    img.src = "floor1.png";
+  } else if (floor == 2) {
+    img.src = "floor2.png";
+  } else if (floor == 3) {
+    img.src = "floor3.png";
+  }
+
+  // Показываем точки только нужного этажа
+  const points = document.querySelectorAll(".point");
+  points.forEach(point => {
+    if (point.dataset.floor == floor) {
+      point.style.display = "block";
+    } else {
+      point.style.display = "none";
+    }
+  });
+
+  // Обновляем стили кнопок: убираем класс у всех, добавляем к активной
+  const buttons = document.querySelectorAll('.floor-btn');
+  buttons.forEach(btn => {
+    btn.classList.remove('active-floor');
+  });
+  event.target.classList.add('active-floor');
+}
+
 
 
 </script>
